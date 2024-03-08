@@ -1,0 +1,397 @@
+<script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+
+
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
+<link rel="stylesheet" href="/style.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+    crossorigin="anonymous"></script>
+
+
+<!-- char-area -->
+<section class="message-area d-none" id="app">
+    <div class="container">
+        <div class="row justify-content-center" v-if="userId==0">
+            <div class="col-sm-6 col-lg-4">
+                <div class="card">
+                    <div class="card-body">
+
+                        <div class="form-floating mb-3">
+                            <input type="email" v-model="name" class="form-control" id="floatingInput"
+                                placeholder="name@example.com">
+                            <label for="floatingInput">Name</label>
+                        </div>
+                        <div class="form-floating">
+                            <input type="text" v-model="mobile" class="form-control" id="floatingPassword"
+                                placeholder="Password">
+                            <label for="floatingPassword">Mobile No.</label>
+                        </div>
+
+                        <button class="btn btn-primary w-100 mt-2" @click="start()">
+                            Start
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" v-if="userId!=0">
+            <div class="col-12">
+                <div class="chat-area">
+                    <!-- chatlist -->
+                    <div class="chatlist">
+                        <div class="modal-dialog-scrollable">
+                            <div class="modal-content">
+                                <div class="chat-header">
+                                    <div class="msg-search">
+                                        <input type="text" class="form-control" id="inlineFormInputGroup"
+                                            placeholder="Search" aria-label="search">
+                                        <a class="add" href="#"><img class="img-fluid"
+                                                src="https://mehedihtml.com/chatbox/assets/img/add.svg" alt="add"></a>
+                                    </div>
+
+                                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link active" id="Open-tab" data-bs-toggle="tab"
+                                                data-bs-target="#Open" type="button" role="tab" aria-controls="Open"
+                                                aria-selected="true">Open</button>
+                                        </li>
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link" id="Closed-tab" data-bs-toggle="tab"
+                                                data-bs-target="#Closed" type="button" role="tab" aria-controls="Closed"
+                                                aria-selected="false">Closed</button>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <div class="modal-body">
+                                    <!-- chat-list -->
+                                    <div class="chat-lists">
+                                        <div class="tab-content" id="myTabContent">
+                                            <div class="tab-pane fade show active" id="Open" role="tabpanel"
+                                                aria-labelledby="Open-tab">
+                                                <!-- chat-list -->
+                                                <div class="chat-list">
+                                                    <a href="#" class="d-flex align-items-center" @click="startchat(i)"
+                                                        v-for="(row,i) in members">
+                                                        <div class="flex-shrink-0">
+                                                            <img class="img-fluid"
+                                                                src="https://mehedihtml.com/chatbox/assets/img/user.png"
+                                                                alt="user img ">
+                                                            <span class="active"></span>
+                                                        </div>
+                                                        <div class="flex-grow-1 ms-3">
+                                                            <h3>{{row.name}}</h3>
+                                                            <p>front end developer </p>
+                                                        </div>
+                                                    </a>
+                                                    <!-- <a href="#" class="d-flex align-items-center">
+                                                        <div class="flex-shrink-0">
+                                                            <img class="img-fluid"
+                                                                src="https://mehedihtml.com/chatbox/assets/img/user.png"
+                                                                alt="user img">
+                                                        </div>
+                                                        <div class="flex-grow-1 ms-3">
+                                                            <h3>Ryhan</h3>
+                                                            <p>front end developer</p>
+                                                        </div>
+                                                    </a> -->
+
+
+                                                </div>
+                                                <!-- chat-list -->
+                                            </div>
+                                            <div class="tab-pane fade" id="Closed" role="tabpanel"
+                                                aria-labelledby="Closed-tab">
+
+                                                <!-- chat-list -->
+                                                <div class="chat-list">
+                                                    <a href="#" class="d-flex align-items-center">
+                                                        <div class="flex-shrink-0">
+                                                            <img class="img-fluid"
+                                                                src="https://mehedihtml.com/chatbox/assets/img/user.png"
+                                                                alt="user img">
+                                                            <span class="active"></span>
+                                                        </div>
+                                                        <div class="flex-grow-1 ms-3">
+                                                            <h3>Mehedi Hasan</h3>
+                                                            <p>front end developer</p>
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                                <!-- chat-list -->
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <!-- chat-list -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- chatlist -->
+
+                    <!-- chatbox -->
+                    <div class="chatbox ">
+                        <div class="modal-dialog-scrollable" v-if="chatid!=-1">
+                            <div class="modal-content">
+                                <div class="msg-head">
+                                    <div class="row">
+                                        <div class="col-8">
+                                            <div class="d-flex align-items-center">
+                                                <span class="chat-icon"><img class="img-fluid"
+                                                        src="https://mehedihtml.com/chatbox/assets/img/arroleftt.svg"
+                                                        alt="image title"></span>
+                                                <div class="flex-shrink-0">
+                                                    <img class="img-fluid"
+                                                        src="https://mehedihtml.com/chatbox/assets/img/user.png"
+                                                        alt="user img">
+                                                </div>
+                                                <div class="flex-grow-1 ms-3">
+                                                    <h3>{{members[chatid]['name']}}</h3>
+                                                    <p>{{members[chatid].online?"Online":""}}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <ul class="moreoption">
+                                                <li class="navbar nav-item dropdown">
+                                                    <a class="nav-link dropdown-toggle" href="#" role="button"
+                                                        data-bs-toggle="dropdown" aria-expanded="false"><i
+                                                            class="fa fa-ellipsis-v" aria-hidden="true"></i></a>
+                                                    <ul class="dropdown-menu">
+                                                        <li><a class="dropdown-item" href="#">Action</a></li>
+                                                        <li><a class="dropdown-item" href="#">Another action</a></li>
+                                                        <li>
+                                                            <hr class="dropdown-divider">
+                                                        </li>
+                                                        <li><a class="dropdown-item" href="#">Something else here</a>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="modal-body">
+                                    <div class="msg-body">
+                                        <ul>
+                                            <li :class='[message.userId==userId?"repaly":"sender"]'
+                                                v-for="message in chats">
+                                                <p> {{message.message}} </p>
+                                                <span class="time">{{message.datetime}}</span>
+                                            </li>
+                                            <!-- <li class="sender">
+                                                <p> Hey, Are you there? </p>
+                                                <span class="time">10:16 am</span>
+                                            </li>
+                                            <li class="repaly">
+                                                <p>yes!</p>
+                                                <span class="time">10:20 am</span>
+                                            </li>
+                                            <li class="sender">
+                                                <p> Hey, Are you there? </p>
+                                                <span class="time">10:26 am</span>
+                                            </li>
+                                            <li class="sender">
+                                                <p> Hey, Are you there? </p>
+                                                <span class="time">10:32 am</span>
+                                            </li>
+                                            <li class="repaly">
+                                                <p>How are you?</p>
+                                                <span class="time">10:35 am</span>
+                                            </li> -->
+                                            <!-- <li>
+                                                <div class="divider">
+                                                    <h6>Today</h6>
+                                                </div>
+                                            </li> -->
+
+                                            <!-- <li class="repaly">
+                                                <p> yes, tell me</p>
+                                                <span class="time">10:36 am</span>
+                                            </li>
+                                            <li class="repaly">
+                                                <p>yes... on it</p>
+                                                <span class="time">junt now</span>
+                                            </li> -->
+
+                                        </ul>
+                                    </div>
+                                </div>
+
+
+                                <div class="send-box">
+                                    <form action="">
+                                        <input type="text" class="form-control" aria-label="message…"
+                                            placeholder="Write message…" v-model="message">
+
+                                        <button @click="sendmessage()" type="button"><i class="fa fa-paper-plane"
+                                                aria-hidden="true"></i>
+                                            Send</button>
+                                    </form>
+
+                                    <div class="send-btns">
+                                        <div class="attach">
+                                            <div class="button-wrapper">
+                                                <span class="label">
+                                                    <img class="img-fluid"
+                                                        src="https://mehedihtml.com/chatbox/assets/img/upload.svg"
+                                                        alt="image title"> attached file
+                                                </span><input type="file" name="upload" id="upload" class="upload-box"
+                                                    placeholder="Upload File" aria-label="Upload File">
+                                            </div>
+
+                                            <select class="form-control" id="exampleFormControlSelect1">
+                                                <option>Select template</option>
+                                                <option>Template 1</option>
+                                                <option>Template 2</option>
+                                            </select>
+
+                                            <div class="add-apoint">
+                                                <a href="#" data-toggle="modal" data-target="#exampleModal4"><svg
+                                                        xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                        viewbox="0 0 16 16" fill="none">
+                                                        <path
+                                                            d="M8 16C3.58862 16 0 12.4114 0 8C0 3.58862 3.58862 0 8 0C12.4114 0 16 3.58862 16 8C16 12.4114 12.4114 16 8 16ZM8 1C4.14001 1 1 4.14001 1 8C1 11.86 4.14001 15 8 15C11.86 15 15 11.86 15 8C15 4.14001 11.86 1 8 1Z"
+                                                            fill="#7D7D7D" />
+                                                        <path
+                                                            d="M11.5 8.5H4.5C4.224 8.5 4 8.276 4 8C4 7.724 4.224 7.5 4.5 7.5H11.5C11.776 7.5 12 7.724 12 8C12 8.276 11.776 8.5 11.5 8.5Z"
+                                                            fill="#7D7D7D" />
+                                                        <path
+                                                            d="M8 12C7.724 12 7.5 11.776 7.5 11.5V4.5C7.5 4.224 7.724 4 8 4C8.276 4 8.5 4.224 8.5 4.5V11.5C8.5 11.776 8.276 12 8 12Z"
+                                                            fill="#7D7D7D" />
+                                                    </svg> Appoinment</a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- chatbox -->
+
+
+            </div>
+        </div>
+    </div>
+    </div>
+</section>
+<!-- char-area -->
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+
+<script>
+    // const socket = new io("ws://localhost:3001?userid=12");
+    // const socket = new WebSocket("ws://localhost:3001?userid=12");
+
+    // socket.send('something');
+    jQuery(document).ready(function () {
+
+        $(".chat-list a").click(function () {
+            $(".chatbox").addClass('showbox');
+            return false;
+        });
+
+        $(".chat-icon").click(function () {
+            $(".chatbox").removeClass('showbox');
+        });
+
+        $('.chatbox .modal-body').animate({ scrollTop: 99999999 }, 'slow');
+
+
+
+    });
+
+    var app = new Vue({
+        el: "#app",
+        data: {
+            socket: null,
+            name: "",
+            mobile: "",
+            message: "",
+            userId: 0,
+            chatid: -1,
+            members: [],
+            chats: [],
+            receiverOnline: false
+        },
+        methods: {
+            start: function () {
+                $.post(`http://${window.location.host}/authuser`, { name: this.name, mobile: this.mobile },).then(res => {
+                    console.log(res);
+                    this.userId = res.userInfo.userId;
+                    this.members = res.allusers;
+                    this.scoketEvents();
+                });
+            },
+            startchat: function (index) {
+                this.chatid = index
+                this.socket.emit("startchat", {
+                    chatId: this.members[this.chatid].userId,
+                    userId: this.userId,
+                });
+                this.receiverOnline = false;
+            },
+            sendmessage: function () {
+                this.socket.emit("sendmessage", {
+                    receiverId: this.members[this.chatid].userId,
+                    userId: this.userId,
+                    message: this.message,
+                    datetime: '10:36 am'
+                });
+                this.message = '';
+            },
+            scoketEvents: function () {
+                this.socket = new io(`ws://${window.location.host}?userid=${this.userId}&mobile=${this.mobile}`);
+                this.socket.on('receivermessage', (data) => {
+                    console.log("data", data);
+                    this.chats.push(data);
+                    $('.chatbox .modal-body').animate({ scrollTop: 99999999 }, 'slow');
+                })
+                this.socket.on('fetchmessage', (data) => {
+                    console.log("data", data);
+                    this.chats = [];
+                    data.forEach(element => {
+                        this.chats.push(JSON.parse(element));
+
+                    });
+                    $('.chatbox .modal-body').animate({ scrollTop: 99999999 }, 'slow');
+                })
+                this.socket.on('online', (userId) => {
+                    console.log("online", userId);
+                    this.members.forEach(member => {
+                        if (member.userId == userId)
+                            member.online = true;
+
+                    });
+                })
+                this.socket.on('offline', (userId) => {
+                    console.log("offline", userId);
+
+                    // this.receiverOnline = true;
+                    this.members.forEach(member => {
+                        if (member.userId == userId)
+                            member.online = false;
+
+                    });
+                })
+            },
+        },
+        mounted() {
+            $("#app").removeClass('d-none');
+        },
+    });
+</script>
